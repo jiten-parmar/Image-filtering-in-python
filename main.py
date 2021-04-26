@@ -2,45 +2,91 @@ import cv2
 from tkinter import *
 import numpy as np
 import scipy.interpolate
-import matplotlib.pyplot as plt
 from tkinter.filedialog import askopenfilename
+from PIL import ImageTk,Image
+
+root = Tk()
+root.geometry('1200x700')
+root.title('Image Editor')
 
 
 def fileOpen():
-    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
-    filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
+    Tk().withdraw()
+    filename = askopenfilename()
     return filename
 
-root = Tk()
-root.geometry('600x600')
+
 filename = fileOpen()
 image1 = cv2.imread(filename)
 
+myImage = ImageTk.PhotoImage(Image.open(filename))
+myLabel = Label(image=myImage)
+#myLabel.grid(row=4, column=0, columnspan=13)
+
+def Scale():
+    global image1
+    image = image1
+
+    width = 1280
+    height = 720
+
+    # dsize
+    dsize = (width, height)
+
+    # resize image
+    output0 = cv2.resize(image, dsize)
+
+    scale_percent = int(e.get())
+
+    # calculate the 50 percent of original dimensions
+    width = int(output0.shape[1] * scale_percent / 100)
+    height = int(output0.shape[0] * scale_percent / 100)
+
+    # dsize
+    dsize = (width, height)
+
+    # resize image
+    output = cv2.resize(output0, dsize)
+
+    cv2.imshow("output", output)
+    cv2.waitKey(0)
 
 
-def dilation_erosion():
+
+
+def Abs_BandW():
     global image1
     image = image1
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     r, image = cv2.threshold(image, 150, 255, cv2.THRESH_BINARY)
 
-    kernel = np.ones((5, 5), np.uint8)
-    fig, ax = plt.subplots(1, figsize=(16, 12))
+    width = 1280
+    height = 720
 
-    m = cv2.morphologyEx(image, cv2.MORPH_GRADIENT, kernel)
-    ax = plt.subplot(236)
-    plt.imshow(m, cmap='Greys')
-    plt.title('dilation - erosion')
-    plt.savefig('dila_ero.png', dpi=300, bbox_inches='tight')
-    imagef = cv2.imread("dila_ero.png")
-    cv2.imshow("output", image)
+    # dsize
+    dsize = (width, height)
+
+    # resize image
+    output = cv2.resize(image, dsize)
+
+    cv2.imshow("output", output)
     cv2.waitKey(0)
 
 def blackAndWhite():
     global image1
     image = image1
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    cv2.imshow("output", image)
+
+    width = 1280
+    height = 720
+
+    # dsize
+    dsize = (width, height)
+
+    # resize image
+    output = cv2.resize(image, dsize)
+
+    cv2.imshow("output", output)
     cv2.waitKey(0)
 
 
@@ -48,7 +94,15 @@ def gaussianBlur():
     global image1
     image = image1
     x = cv2.GaussianBlur(image, (35, 35), 0)
-    cv2.imshow("output", x)
+    width = 1280
+    height = 720
+
+    # dsize
+    dsize = (width, height)
+
+    # resize image
+    output = cv2.resize(x, dsize)
+    cv2.imshow("output", output)
     cv2.waitKey(0)
 
 def sharpen():
@@ -58,7 +112,15 @@ def sharpen():
                        [-1, 9, -1],
                        [-1, -1, -1]])
     x = cv2.filter2D(image, -1, kernel)
-    cv2.imshow("output", x)
+    width = 1280
+    height = 720
+
+    # dsize
+    dsize = (width, height)
+
+    # resize image
+    output = cv2.resize(x, dsize)
+    cv2.imshow("output", output)
     cv2.waitKey(0)
 
 
@@ -70,7 +132,15 @@ def sepia():
                        [0.393, 0.769, 0.189]])
 
     x = cv2.filter2D(image, -1, kernel)
-    cv2.imshow("output",x)
+    width = 1280
+    height = 720
+
+    # dsize
+    dsize = (width, height)
+
+    # resize image
+    output = cv2.resize(x, dsize)
+    cv2.imshow("output",output)
     cv2.waitKey(0)
 
 
@@ -81,15 +151,32 @@ def emboss():
                         [1,0,-1],
                         [1,1,0]])
     x = cv2.filter2D(image, -1, kernel)
-    cv2.imshow("output", x)
+    width = 1280
+    height = 720
+
+    # dsize
+    dsize = (width, height)
+
+    # resize image
+    output = cv2.resize(x, dsize)
+    cv2.imshow("output", output)
     cv2.waitKey(0)
 
 
 def brightnessControl():
     global image1
     image = image1
-    x = cv2.convertScaleAbs(image, beta=150)
-    cv2.imshow("output", x)
+    brightness = int(e.get())
+    x = cv2.convertScaleAbs(image, beta=brightness)
+    width = 1280
+    height = 720
+
+    # dsize
+    dsize = (width, height)
+
+    # resize image
+    output = cv2.resize(x, dsize)
+    cv2.imshow("output", output)
     cv2.waitKey(0)
 
 
@@ -108,7 +195,15 @@ def coldImage():
     red_channel = cv2.LUT(red_channel, increaseLookupTable).astype(np.uint8)
     blue_channel = cv2.LUT(blue_channel, decreaseLookupTable).astype(np.uint8)
     x = cv2.merge((red_channel, green_channel, blue_channel))
-    cv2.imshow("output", x)
+    width = 1280
+    height = 720
+
+    # dsize
+    dsize = (width, height)
+
+    # resize image
+    output = cv2.resize(x, dsize)
+    cv2.imshow("output", output)
     cv2.waitKey(0)
 
 def warmImage():
@@ -120,23 +215,32 @@ def warmImage():
     red_channel = cv2.LUT(red_channel, decreaseLookupTable).astype(np.uint8)
     blue_channel = cv2.LUT(blue_channel, increaseLookupTable).astype(np.uint8)
     x = cv2.merge((red_channel, green_channel, blue_channel))
-    cv2.imshow("output", x)
+    width = 1280
+    height = 720
+
+    # dsize
+    dsize = (width, height)
+
+    # resize image
+    output = cv2.resize(x, dsize)
+    cv2.imshow("output", output)
     cv2.waitKey(0)
 
 
+e = Entry(root, width=10, borderwidth=5)
+e.grid(row=3, column=2, padx=10, pady=10)
+sepiaButton = Button(root, text="sepia",width=30, height=3,font=28, padx=40, pady=20,  command=lambda: sepia()).grid(row=0,column=0)
+blurButton = Button(root, text="blur",width=30, height=3,font=28,padx=40, pady=20, command=gaussianBlur).grid(row=0,column=2)
+embossButton = Button(root, text="emboss",width=30, height=3,font=28,padx=40, pady=20, command=emboss).grid(row=0,column=3)
+sharpButton = Button(root, text="sharp",width=30, height=3,font=28,padx=40, pady=20, command=sharpen).grid(row=1,column=0)
+brightButton = Button(root, text="bright",width=30, height=3,font=28,padx=40, pady=20, command=brightnessControl).grid(row=2,column=2)
+coldButton = Button(root, text="cold",width=30, height=3,font=28,padx=40, pady=20, command=coldImage).grid(row=1,column=2)
+Warmbutton = Button(root, text="warm",width=30, height=3,font=28,padx=40, pady=20, command=warmImage).grid(row=1,column=3)
+PureBandW_button = Button(root, text="pure B & W",width=30, height=3,font=28,padx=40, pady=20, command=Abs_BandW).grid(row=2,column=0)
+blackAndWhiteButton = Button(root, text="B & W",width=30, height=3,font=28,padx=40, pady=20, command=blackAndWhite).grid(row=2,column=3)
+scaleButton = Button(root, text="Scale",width=30, height=3,font=28, padx=40, pady=20,  command=Scale).grid(row=3,column=0)
 
-
-sepiaButton = Button(root, text="sepia", command=sepia).grid(row=0,column=0)
-blurButton = Button(root, text="blur", command=gaussianBlur).grid(row=0,column=1)
-embossButton = Button(root, text="emboss", command=emboss).grid(row=0,column=2)
-sharpButton = Button(root, text="sharp", command=sharpen).grid(row=1,column=0)
-brightButton = Button(root, text="bright", command=brightnessControl).grid(row=2,column=1)
-coldButton = Button(root, text="cold", command=coldImage).grid(row=1,column=1)
-Warmbutton = Button(root, text="warm", command=warmImage).grid(row=1,column=2)
-dilation_erosion_button = Button(root, text="dil_eros", command=dilation_erosion).grid(row=2,column=0)
-blackAndWhiteButton = Button(root, text="B & W", command=blackAndWhite).grid(row=2,column=2)
-
-
+button_Exit = Button(root, text="Exit", command=root.quit).grid(row=5,column=3)
 
 
 #cv2.imshow("output",coldimage)
